@@ -35,7 +35,7 @@ const [fundingStage, setFundingStage] = useState("Bootstrapped");
 const [investorQuality, setInvestorQuality] = useState("Low");
 const [competition, setCompetition] = useState("Medium");
 
-      const res = await fetch("http://127.0.0.1:5000/predict", {
+      const res = await fetch("https://startup-xray.onrender.com/predict", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
