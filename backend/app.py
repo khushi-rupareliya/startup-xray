@@ -47,43 +47,55 @@ def predict():
     try:
         data = request.get_json()
 
-        # ✅ Get values safely
-        funding_stage = data.get('fundingStage')
-        investor_quality = data.get('investorQuality')
-        competition = data.get('competition')
+        # Safe gets (NO crash)
+        funding = data.get('fundingStage', 0)
+        employees = data.get('employees', 1)
+        revenue = data.get('revenue', 1)
+        customers = data.get('customers', 1)
+        industry = data.get('industry', 'Other')
+        stage = data.get('stage', 'Seed')
 
-        # ✅ Mappings (adjust if needed)
+        # Convert funding stage to number
         funding_map = {
             "Bootstrapped": 0,
             "Seed": 1,
             "Series A": 2,
             "Series B": 3
         }
+        funding = funding_map.get(funding, 0)
 
-        investor_map = {
-            "Low": 0,
-            "Medium": 1,
-            "High": 2
-        }
+        # Create full feature dictionary
+        input_dict = {col: 0 for col in columns}
 
-        competition_map = {
-            "Low": 0,
-            "Medium": 1,
-            "High": 2
-        }
+        # Base features
+        input_dict['Total Funding ($M)'] = funding
+        input_dict['Number of Employees'] = employees
+        input_dict['Annual Revenue ($M)'] = revenue
+        input_dict['Customer Base (Millions)'] = customers
 
-        # ✅ Convert to numbers
-        funding = funding_map.get(funding_stage, 0)
-        investor = investor_map.get(investor_quality, 0)
-        comp = competition_map.get(competition, 1)
+        # Engineered features
+        input_dict['Funding_per_Employee'] = funding / (employees + 1)
+        input_dict['Revenue_per_Employee'] = revenue / (employees + 1)
+        input_dict['Revenue_to_Funding'] = revenue / (funding + 1)
+        input_dict['Revenue_per_Customer'] = revenue / (customers + 1)
 
-        # ✅ Create feature vector (MATCH your model training shape)
-        features = np.array([[funding, investor, comp]])
+        # Industry encoding
+        industry_col = f'Industry_{industry}'
+        if industry_col in input_dict:
+            input_dict[industry_col] = 1
 
-        # ⚠️ If your model was trained with scaler → keep this
+        # Stage encoding
+        stage_col = f'Funding Stage_{stage}'
+        if stage_col in input_dict:
+            input_dict[stage_col] = 1
+
+        # Convert to array
+        features = np.array([list(input_dict.values())])
+
+        # Scale
         features = scaler.transform(features)
 
-        # ✅ Predictions
+        # Predict
         prediction = model.predict(features)[0]
         probability = logistic_model.predict_proba(features)[0][1]
 
@@ -91,6 +103,10 @@ def predict():
             "prediction": int(prediction),
             "probability": float(probability)
         })
+
+    except Exception as e:
+        print("ERROR:", str(e))
+        return jsonify({"error": str(e)}), 500
 
     except Exception as e:
         print("ERROR:", str(e))
