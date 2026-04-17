@@ -66,12 +66,16 @@ const [industry, setIndustry] = useState("");
   const handleAnalyzeIdea = async () => {
     console.log("Button clicked");
   try {
-    const res = await fetch("http://127.0.0.1:5000/analyze-idea", {
+    const res = await fetch("https://startup-xray.onrender.com/predict", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ idea })
+      body: JSON.stringify({
+       fundingStage,
+       investorQuality,
+       competition
+    })
     });
 
     const data = await res.json();
