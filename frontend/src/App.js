@@ -35,25 +35,34 @@ const [fundingStage, setFundingStage] = useState("Bootstrapped");
 const [investorQuality, setInvestorQuality] = useState("Low");
 const [competition, setCompetition] = useState("Medium");
 
-      const res = await fetch("https://startup-xray.onrender.com/predict", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+const [industry, setIndustry] = useState("");
 
-      const response = await res.json();
+ async function handleSubmit() {
+  try {
+    const data = {
+      fundingStage,
+      investorQuality,
+      competition
+    };
 
-      const prob = (response.probability * 100).toFixed(1);
-      setResult(Number(prob));
-      setStep(4);
+    const res = await fetch("https://startup-xray.onrender.com/predict", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
 
-    } catch (err) {
-      console.error("Error:", err);
-    }
-  };
+    const response = await res.json();
 
+    const prob = (response.probability * 100).toFixed(1);
+    setResult(Number(prob));
+    setStep(4);
+
+  } catch (err) {
+    console.error("Error:", err);
+  }
+}
   const handleAnalyzeIdea = async () => {
     console.log("Button clicked");
   try {

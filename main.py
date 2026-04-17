@@ -187,3 +187,12 @@ print("Model, scaler, and columns saved successfully")
 
 print("Final training columns:")
 print(X.columns)
+
+
+
+# print all 3 accuracies
+print("\nFinal Accuracies:")
+print("\nLogistic Regression Accuracy:", accuracy)
+print("Random Forest Accuracy:", rf_accuracy)
+print("XGBoost Accuracy:", xgb_accuracy)
+print("\nXGBoost Accuracy:", xgb_accuracy)
