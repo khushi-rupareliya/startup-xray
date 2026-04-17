@@ -63,26 +63,26 @@ const [industry, setIndustry] = useState("");
     console.error("Error:", err);
   }
 }
-  const handleAnalyzeIdea = async () => {
-    console.log("Button clicked");
+const handleAnalyzeIdea = async () => {
+  console.log("Button clicked");
+
   try {
-    const res = await fetch("https://startup-xray.onrender.com/predict", {
+    const res = await fetch("https://startup-xray.onrender.com/analyze-idea", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-       fundingStage,
-       investorQuality,
-       competition
-    })
+        idea: idea   // 👈 THIS is your text input
+      })
     });
 
     const data = await res.json();
-    setAnalysis(data);
+    console.log(data);
 
+    setAnalysis(data);   // 👈 this fills your UI
   } catch (err) {
-    console.error(err);
+    console.error("Error:", err);
   }
 };
 
