@@ -1,22 +1,18 @@
-from http import client
-
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import pickle
 import numpy as np
 import os
 from openai import OpenAI
-
 from dotenv import load_dotenv
-import os
 
 load_dotenv()
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
+
 
 # Base directory
 base_dir = os.path.dirname(__file__)
