@@ -1,5 +1,3 @@
-import { CircularProgressbar } from "react-circular-progressbar";
-import "react-circular-progressbar/dist/styles.css";
 import { Sun, Moon } from "lucide-react";
 
 import React, { useState } from "react";
@@ -11,13 +9,6 @@ function App() {
 
   const [idea, setIdea] = useState("");
   const [analysis, setAnalysis] = useState(null); 
-
-  const [funding, setFunding] = useState("");
-  const [employees, setEmployees] = useState("");
-  const [revenue, setRevenue] = useState("");
-  const [customers, setCustomers] = useState("");
-  const [industry, setIndustry] = useState("Tech");
-  const [stage, setStage] = useState("Seed");
 
   const [result, setResult] = useState(0);
 
@@ -43,17 +34,6 @@ const [fundingAmount, setFundingAmount] = useState("");
 const [fundingStage, setFundingStage] = useState("Bootstrapped");
 const [investorQuality, setInvestorQuality] = useState("Low");
 const [competition, setCompetition] = useState("Medium");
-
-  const handlePredict = async () => {
-    try {
-      const data = {
-        funding: Number(funding),
-        employees: Number(employees),
-        revenue: Number(revenue),
-        customers: Number(customers),
-        industry: industry,
-        stage: stage,
-      };
 
       const res = await fetch("http://127.0.0.1:5000/predict", {
         method: "POST",
