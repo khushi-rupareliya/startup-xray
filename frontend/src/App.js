@@ -1,6 +1,6 @@
 import { Sun, Moon } from "lucide-react";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./style.css";
 
 function App() {
@@ -36,6 +36,12 @@ const [investorQuality, setInvestorQuality] = useState("Low");
 const [competition, setCompetition] = useState("Medium");
 
 const [industry, setIndustry] = useState("");
+
+useEffect(() => {
+  if (analysis?.industry) {
+    setIndustry(analysis.industry);
+  }
+}, [analysis]);
 
  async function handleSubmit() {
   try {
@@ -255,7 +261,7 @@ return (
 
       <label>Industry</label>
       <input
-        value={industry || analysis?.industry || ""}
+        value={industry}
         onChange={(e) => setIndustry(e.target.value)}
         placeholder="e.g. EdTech, AI"
       />
