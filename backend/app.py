@@ -44,62 +44,57 @@ def home():
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    data = request.json
+    try:
+        data = request.get_json()
 
-    funding = data['funding']
-    employees = data['employees']
-    revenue = data['revenue']
-    customers = data['customers']
-    industry = data['industry']
-    stage = data['stage']
+        # ✅ Get values safely
+        funding_stage = data.get('fundingStage')
+        investor_quality = data.get('investorQuality')
+        competition = data.get('competition')
 
-    # Create feature dictionary (all columns = 0)
-    input_dict = {col: 0 for col in columns}
+        # ✅ Mappings (adjust if needed)
+        funding_map = {
+            "Bootstrapped": 0,
+            "Seed": 1,
+            "Series A": 2,
+            "Series B": 3
+        }
 
-    # Base features
-    input_dict['Total Funding ($M)'] = funding
-    input_dict['Number of Employees'] = employees
-    input_dict['Annual Revenue ($M)'] = revenue
-    input_dict['Customer Base (Millions)'] = customers
+        investor_map = {
+            "Low": 0,
+            "Medium": 1,
+            "High": 2
+        }
 
-    # Engineered features
-    input_dict['Funding_per_Employee'] = funding / (employees + 1)
-    input_dict['Revenue_per_Employee'] = revenue / (employees + 1)
-    input_dict['Revenue_to_Funding'] = revenue / (funding + 1)
-    input_dict['Revenue_per_Customer'] = revenue / (customers + 1)
+        competition_map = {
+            "Low": 0,
+            "Medium": 1,
+            "High": 2
+        }
 
-    # Industry encoding
-    industry_col = f'Industry_{industry}'
-    if industry_col in input_dict:
-        input_dict[industry_col] = 1
+        # ✅ Convert to numbers
+        funding = funding_map.get(funding_stage, 0)
+        investor = investor_map.get(investor_quality, 0)
+        comp = competition_map.get(competition, 1)
 
-    # Stage encoding
-    stage_col = f'Funding Stage_{stage}'
-    if stage_col in input_dict:
-        input_dict[stage_col] = 1
+        # ✅ Create feature vector (MATCH your model training shape)
+        features = np.array([[funding, investor, comp]])
 
-    # Convert to array
-    features = np.array([list(input_dict.values())])
+        # ⚠️ If your model was trained with scaler → keep this
+        features = scaler.transform(features)
 
-    print("Feature length:", len(features[0]))
+        # ✅ Predictions
+        prediction = model.predict(features)[0]
+        probability = logistic_model.predict_proba(features)[0][1]
 
-    # Scale input
-    features = scaler.transform(features)
+        return jsonify({
+            "prediction": int(prediction),
+            "probability": float(probability)
+        })
 
-    # Random Forest → prediction
-    prediction = model.predict(features)[0]
-
-    # Logistic Regression → smooth probability
-    probability = logistic_model.predict_proba(features)[0][0]
-
-    # Adjust probability for better UX
-    adjusted_probability = 0.5 + (probability - 0.5) * 1.3
-    adjusted_probability = max(0.1, min(0.95, adjusted_probability))
-
-    return jsonify({
-        "prediction": int(prediction),
-        "probability": float(adjusted_probability)
-    })
+    except Exception as e:
+        print("ERROR:", str(e))
+        return jsonify({"error": str(e)}), 500
 
 
 
