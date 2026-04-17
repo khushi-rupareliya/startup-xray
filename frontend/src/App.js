@@ -472,7 +472,7 @@ return (
 
       <button
         onClick={() => setStep(5)}
-        disabled={!teamSize || !founderExperience || !teamSkills}
+        disabled={!teamSize}
       >
         Next →
       </button>
