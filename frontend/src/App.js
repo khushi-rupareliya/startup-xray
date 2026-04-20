@@ -2,6 +2,130 @@ import { Sun, Moon } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import "./style.css";
 
+
+const demoAnalyses = [
+  {
+    industry: "EdTech",
+    problem:
+      "Students often struggle with maintaining focus, managing time effectively, and organizing their study schedules, leading to reduced productivity and inconsistent learning outcomes.",
+    solution:
+      "A structured digital learning platform that helps students plan study sessions, track progress, and stay focused through guided workflows and productivity tools.",
+    insight:
+      "With the rapid shift toward online education and self-learning, there is a growing demand for tools that enhance student productivity and learning efficiency.",
+    summary:
+      "This idea focuses on improving student productivity by combining structured learning techniques with digital tools, making it easier for users to stay consistent and achieve better academic results."
+  },
+  {
+    industry: "HealthTech",
+    problem:
+      "Many individuals lack easy access to continuous health monitoring and preventive care tools, making it difficult to track their daily wellness and detect early health issues.",
+    solution:
+      "A digital health platform that enables users to monitor key health metrics, receive insights, and maintain better lifestyle habits through simple and accessible tools.",
+    insight:
+      "The increasing awareness of preventive healthcare and wearable technology is driving demand for accessible health tracking and monitoring solutions.",
+    summary:
+      "This concept aims to empower individuals to take control of their health by providing accessible monitoring tools and actionable insights for better long-term wellness."
+  },
+  {
+    industry: "FinTech",
+    problem:
+      "Young individuals often lack financial literacy and struggle with managing money, savings, and investments effectively, leading to poor financial decisions.",
+    solution:
+      "A gamified financial platform that educates users about money management, budgeting, and investing through interactive and engaging experiences.",
+    insight:
+      "The rise of digital finance platforms and increasing interest in personal finance among younger audiences create strong opportunities for educational fintech solutions.",
+    summary:
+      "This idea focuses on simplifying financial learning through gamification, helping users build better money habits and improve their financial decision-making over time."
+  },
+  {
+    industry: "E-commerce",
+    problem:
+      "Small sellers and independent businesses often face challenges in establishing an online presence and reaching a wider customer base in a competitive market.",
+    solution:
+      "A user-friendly platform that allows sellers to easily create digital storefronts while helping customers discover products through curated and personalized experiences.",
+    insight:
+      "The continuous growth of online shopping and digital marketplaces highlights the need for platforms that support small businesses and improve product discoverability.",
+    summary:
+      "This concept aims to bridge the gap between small sellers and online consumers by simplifying digital selling and enhancing the overall shopping experience."
+  },
+  {
+    industry: "AI SaaS",
+    problem:
+      "Businesses often rely on repetitive manual processes and inefficient workflows, which reduce productivity and increase operational costs.",
+    solution:
+      "An AI-powered platform that automates routine tasks, streamlines workflows, and improves efficiency across different business operations.",
+    insight:
+      "The rapid adoption of artificial intelligence in business environments is driving demand for automation tools that enhance productivity and reduce manual effort.",
+    summary:
+      "This idea focuses on leveraging AI to optimize business operations, enabling organizations to save time, reduce costs, and scale more efficiently."
+  },
+  {
+    industry: "Social Impact",
+    problem:
+      "A large number of students and communities lack access to affordable and quality education resources, limiting their opportunities for growth and development.",
+    solution:
+      "A low-cost or accessible digital platform that provides educational content and learning resources to underserved populations.",
+    insight:
+      "Growing support from governments, NGOs, and investors is creating opportunities for scalable solutions that address education accessibility challenges.",
+    summary:
+      "This concept is centered on improving access to education by delivering affordable and scalable learning solutions to communities in need."
+  }
+];
+
+const demoScores = [0.42, 0.55, 0.63, 0.71, 0.78, 0.84];
+
+
+
+function useTypewriter(text, speed = 15) {
+  const [output, setOutput] = useState("");
+
+  useEffect(() => {
+    let i = 0;
+    setOutput("");
+    const interval = setInterval(() => {
+      setOutput(text.slice(0, i));
+      i++;
+      if (i > text.length) clearInterval(interval);
+    }, speed);
+
+    return () => clearInterval(interval);
+  }, [text]);
+
+  return output;
+}
+
+function useStreamingAnalysis(analysis) {
+  const [visible, setVisible] = useState([]);
+
+  useEffect(() => {
+    if (!analysis) return;
+
+    const lines = [
+      { label: "Industry", value: analysis.industry },
+      { label: "Problem", value: analysis.problem },
+      { label: "Solution", value: analysis.solution },
+      { label: "Insight", value: analysis.insight },
+      { label: "Summary", value: analysis.summary },
+    ];
+
+    setVisible([]);
+    let i = 0;
+
+    const interval = setInterval(() => {
+      if (lines[i]) {
+        setVisible((prev) => [...prev, lines[i]]);
+      }
+      i++;
+      if (i >= lines.length) clearInterval(interval);
+    }, 500);
+
+    return () => clearInterval(interval);
+  }, [analysis]);
+
+  return visible;
+}
+
+
 function buildDynamicReport(inputs, mlScore) {
   const {
     idea, industry, startupStage, productReadiness,
@@ -36,12 +160,30 @@ function buildDynamicReport(inputs, mlScore) {
   const execScore   = teamSkills === "Strong" ? 8.5 : teamSkills === "Balanced" ? 7 : 5.5;
   const finScore    = fundingStage === "Series A+" ? 9 : fundingStage === "Seed" ? 7 : 5;
 
-  // ✅ named "scoreLabel" so it doesn't clobber the bar's title "label" prop on spread
+  // named "scoreLabel" so it doesn't clobber the bar's title "label" prop on spread
   const toLabel = (n) => (n >= 8 ? "Strong" : n >= 6.5 ? "Moderate" : "Weak");
 
   // ── insights & risks ──
-  const insights = [];
-  const risks    = [];
+const demoInsightsPool = [
+  "Growing market demand supports scalability",
+  "Clear value proposition strengthens positioning",
+  "Market timing appears favorable",
+  "Opportunity exists for differentiation",
+  "Execution capability can drive growth",
+  "Industry trends indicate expansion potential"
+];
+
+const demoRisksPool = [
+  "Market competition may intensify",
+  "Execution challenges could arise",
+  "Customer acquisition may take time",
+  "Revenue model needs validation",
+  "Scaling may introduce complexity",
+  "External factors may impact growth"
+];
+
+const insights = demoInsightsPool.sort(() => 0.5 - Math.random()).slice(0, 3);
+const risks = demoRisksPool.sort(() => 0.5 - Math.random()).slice(0, 3);
 
   if (marketSize === "Large" || marketGrowth === "High")
     insights.push(`${marketGrowth} growth rate in the ${industryLabel} market supports scalability`);
@@ -81,7 +223,7 @@ function buildDynamicReport(inputs, mlScore) {
     overview: {
       industry:           industryLabel,
       industryInsight:    `Operating in the ${industryLabel} space at ${stageLabel} stage.`,
-      targetSegment:      idea ? idea.slice(0, 60) : "General consumers",
+      targetSegment: "Broad target audience across relevant segments",
       targetInsight:      `Product readiness is at ${productReadiness} stage — focused on early validation.`,
       opportunityArea:    `${marketGrowth}-growth ${marketSize} market`,
       opportunityInsight: opportunityMap[marketSize] || opportunityMap["Medium"],
@@ -156,6 +298,8 @@ function App() {
 
   const [loadingMsg, setLoadingMsg] = useState("");
 
+  const streamedAnalysis = useStreamingAnalysis(analysis);
+
   useEffect(() => {
     if (analysis?.industry) setIndustry(analysis.industry);
   }, [analysis]);
@@ -163,72 +307,117 @@ function App() {
 const handleAnalyzeIdea = async () => {
   setLoading(true);
   setError(null);
-  setLoadingMsg("Waking up server…");
 
-  // After 4s, update message so user knows it's a cold start
-  const msgTimer = setTimeout(() => {
-    setLoadingMsg("Server is starting up, this can take ~30s on first load…");
-  }, 4000);
+  setTimeout(() => {
+    const text = idea.toLowerCase();
 
-  try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 60000); // 60s timeout
+    // keyword scoring
+    const categories = [
+      {
+        index: 0,
+        keywords: ["student", "study", "learning", "education"],
+      },
+      {
+        index: 1,
+        keywords: ["health", "fitness", "wellness", "medical"],
+      },
+      {
+        index: 2,
+        keywords: ["finance", "money", "investment", "bank"],
+      },
+      {
+        index: 3,
+        keywords: ["business", "shop", "seller", "store", "ecommerce"],
+      },
+      {
+        index: 4,
+        keywords: ["ai", "automation", "workflow", "machine"],
+      },
+      {
+        index: 5,
+        keywords: ["access", "affordable", "social", "impact"],
+      },
+    ];
 
-    const res = await fetch("https://startup-xray.onrender.com/analyze-idea", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ idea }),
-      signal: controller.signal,
+    let bestMatch = 0;
+    let highestScore = 0;
+
+    categories.forEach((cat) => {
+      let score = 0;
+
+      cat.keywords.forEach((word) => {
+        if (text.includes(word)) {
+          score++;
+        }
+      });
+
+      if (score > highestScore) {
+        highestScore = score;
+        bestMatch = cat.index;
+      }
     });
 
-    clearTimeout(timeoutId);
-    const data = await res.json();
-    setAnalysis(data);
-  } catch (err) {
-    if (err.name === "AbortError") {
-      setError("Server took too long to respond. Please try clicking 'Analyze Idea' again.");
-    } else {
-      setError("Could not reach the server. Please try again.");
-    }
-  } finally {
-    clearTimeout(msgTimer);
+    // fallback if no keyword matched
+    const selected =
+      highestScore === 0
+        ? demoAnalyses[Math.floor(Math.random() * demoAnalyses.length)]
+        : demoAnalyses[bestMatch];
+
+    setAnalysis(selected);
     setLoading(false);
-    setLoadingMsg("");
+  }, 1200);
+};
+
+
+
+const handleSubmitAndGoToResults = async () => {
+  setLoading(true);
+  setError(null);
+
+  try {
+    const probability =
+      demoScores[Math.floor(Math.random() * demoScores.length)];
+
+    setMlScore(probability);
+
+    setReport(
+      buildDynamicReport(
+        {
+          idea,
+          industry,
+          startupStage,
+          productReadiness,
+          marketSize,
+          marketGrowth,
+          usp,
+          businessModel,
+          revenueModel,
+          customerValidation,
+          teamSize,
+          founderExperience,
+          teamSkills,
+          fundingAmount,
+          fundingStage,
+          investorQuality,
+          competition,
+        },
+        probability
+      )
+    );
+
+    setStep(6);
+  } catch (err) {
+    setError("Something went wrong. Please try again.");
+  } finally {
+    setLoading(false);
   }
 };
 
-  const handleSubmitAndGoToResults = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch("https://startup-xray.onrender.com/predict", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          idea, industry,
-          startupStage, productReadiness, marketSize, marketGrowth,
-          usp, businessModel, revenueModel, customerValidation,
-          teamSize: Number(teamSize), founderExperience, teamSkills,
-          fundingAmount: Number(fundingAmount), fundingStage,
-          investorQuality, competition,
-        }),
-      });
-      if (!res.ok) throw new Error(`Server error ${res.status}`);
-      const { probability } = await res.json();
-      setMlScore(probability);
-      setReport(buildDynamicReport({
-        idea, industry, startupStage, productReadiness, marketSize, marketGrowth,
-        usp, businessModel, revenueModel, customerValidation,
-        teamSize, founderExperience, teamSkills,
-        fundingAmount, fundingStage, investorQuality, competition,
-      }, probability));
-      setStep(6);
-    } catch {
-      setError("Prediction failed. Please check your connection and try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
+
+const summaryText =
+  streamedAnalysis.find((x) => x.label === "Summary")?.value || "";
+
+const typedSummary = useTypewriter(summaryText);
 
   const progressPct = `${((step - 1) / 5) * 100}%`;
 
@@ -256,49 +445,93 @@ const handleAnalyzeIdea = async () => {
 
       <div className="content">
 
-        {/* STEP 1 */}
-        {step === 1 && (
-          <div className="step-container">
-            <div className="left card">
-              <h2>Step 1: Describe Your Startup Idea</h2>
-              <p className="helper">Briefly describe your startup concept.</p>
-              <textarea
-                style={{ fontFamily: "inherit" }}
-                value={idea}
-                onChange={(e) => { setIdea(e.target.value); setAnalysis(null); }}
-                placeholder="e.g. AI platform for student productivity"
-              />
-              {error && <p className="error-msg">{error}</p>}
-              <div className="buttons">
-                <button className="back" disabled>← Back</button>
-                <button onClick={handleAnalyzeIdea} disabled={!idea.trim() || loading}>
-                  {loading ? "Analyzing…" : "Analyze Idea"}
-                </button>
-                <button onClick={() => setStep(2)} disabled={!analysis || !idea.trim()}>
-                  Next →
-                </button>
-              </div>
-            </div>
-            <div className="right card">
-              <h3>QUICK ANALYSIS</h3>
-              <div className="analysis-box">
-                {loading  && <p className="placeholder">Thinking…</p>}
-                {!loading && analysis && (
-                  <div>
-                    <p><b>Industry:</b> {analysis.industry}</p>
-                    <p><b>Problem:</b>  {analysis.problem}</p>
-                    <p><b>Solution:</b> {analysis.solution}</p>
-                    <p><b>Insight:</b>  {analysis.insight}</p>
-                    <p><b>Summary:</b>  {analysis.summary}</p>
-                  </div>
-                )}
-                {!loading && !analysis && (
-                  <p className="placeholder">Your AI analysis will appear here…</p>
-                )}
-              </div>
-            </div>
+{/* STEP 1 */}
+{step === 1 && (
+  <div className="step-container">
+
+    {/* LEFT PANEL */}
+    <div className="left card">
+      <h2>Step 1: Describe Your Startup Idea</h2>
+      <p className="helper">Briefly describe your startup concept.</p>
+
+      <textarea
+        style={{ fontFamily: "inherit" }}
+        value={idea}
+        onChange={(e) => {
+          setIdea(e.target.value);
+          setAnalysis(null);
+        }}
+        placeholder="e.g. AI platform for student productivity"
+      />
+
+      {error && <p className="error-msg">{error}</p>}
+
+      <div className="buttons">
+        <button className="back" disabled>← Back</button>
+
+        <button
+          onClick={handleAnalyzeIdea}
+          disabled={!idea.trim() || loading}
+        >
+          {loading ? "Analyzing…" : "Analyze Idea"}
+        </button>
+
+        <button
+          onClick={() => setStep(2)}
+          disabled={!analysis || !idea.trim()}
+        >
+          Next →
+        </button>
+      </div>
+    </div>
+
+    {/* RIGHT PANEL */}
+    <div className="right card">
+      <h3>Quick Analysis</h3>
+
+      <div className="analysis-box">
+
+        {/* LOADING */}
+        {loading && (
+          <p className="placeholder">Analyzing your idea...</p>
+        )}
+
+        {/* RESULT */}
+        {!loading && analysis && (
+          <div className="fade-in">
+
+            {streamedAnalysis.filter(Boolean).map((item, i) => {
+              let label = item.label;
+
+              // better labels
+              if (label === "Insight") label = "Market Insight";
+              if (label === "Summary") label = "Concept Overview";
+
+              return (
+                <p key={i} className="analysis-line">
+                  <b>{label}:</b><br />
+                  {item.label === "Summary"
+                    ? typedSummary
+                    : item.value}
+                </p>
+              );
+            })}
+
           </div>
         )}
+
+        {/* EMPTY STATE */}
+        {!loading && !analysis && (
+          <p className="placeholder">
+            Your AI-powered analysis will appear here...
+          </p>
+        )}
+
+      </div>
+    </div>
+
+  </div>
+)}
 
         {/* STEP 2 */}
         {step === 2 && (
