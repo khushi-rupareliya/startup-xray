@@ -649,3 +649,85 @@ button:disabled {
     padding: 16px 12px;
   }
 }
+
+/* ── SCORE CIRCLE: glow ring effect ── */
+.score-circle {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  font-size: 34px;
+  box-shadow:
+    0 0 0 8px rgba(99,102,241,0.12),
+    0 0 0 16px rgba(99,102,241,0.06),
+    0 14px 40px rgba(99,102,241,0.35);
+}
+
+/* ── RESULT TOP: subtle hero glow behind the circle ── */
+.result-top {
+  background: radial-gradient(ellipse at 50% 60%, rgba(99,102,241,0.08) 0%, transparent 70%);
+  border-radius: var(--radius-lg);
+  padding: 32px 0 20px;
+}
+
+/* ── OVERVIEW CARDS: slightly taller, better text spacing ── */
+.overview-card {
+  padding: 16px 18px;
+  gap: 6px;
+  border-radius: var(--radius-md);
+}
+
+.overview-card strong {
+  font-size: 15px;
+}
+
+/* ── SCORE BARS: thicker track, more breathing room ── */
+.score-bar-track {
+  height: 8px;   /* was 6px */
+}
+
+.score-bar-row {
+  margin-bottom: 18px;  /* was 16px */
+}
+
+/* ── INSIGHTS/RISKS: pill-style header badges ── */
+.insight-card h4,
+.risk-card h4 {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  margin-bottom: 12px;
+}
+
+.insight-card h4 {
+  background: rgba(34,197,94,0.12);
+  border: 1px solid rgba(34,197,94,0.25);
+}
+
+.risk-card h4 {
+  background: rgba(245,158,11,0.12);
+  border: 1px solid rgba(245,158,11,0.25);
+}
+
+/* ── RECOMMENDATION: left-border glow pulse ── */
+.recommendation {
+  border-left: 3px solid var(--primary);
+  box-shadow: inset 3px 0 12px rgba(99,102,241,0.1);
+}
+
+/* ── START OVER BUTTON: make it clearly visible ── */
+.panel > .buttons {
+  justify-content: center;
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+
+.panel > .buttons button {
+  min-width: 160px;
+  padding: 13px 28px;
+  font-size: 15px;
+  flex: 0;  /* don't stretch full width */
+}
