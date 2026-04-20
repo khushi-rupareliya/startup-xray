@@ -154,27 +154,48 @@ function App() {
   const [investorQuality, setInvestorQuality]       = useState("Low");
   const [competition, setCompetition]               = useState("Medium");
 
+  const [loadingMsg, setLoadingMsg] = useState("");
+
   useEffect(() => {
     if (analysis?.industry) setIndustry(analysis.industry);
   }, [analysis]);
 
-  const handleAnalyzeIdea = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res  = await fetch("https://startup-xray.onrender.com/analyze-idea", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ idea }),
-      });
-      const data = await res.json();
-      setAnalysis(data);
-    } catch {
+const handleAnalyzeIdea = async () => {
+  setLoading(true);
+  setError(null);
+  setLoadingMsg("Waking up server…");
+
+  // After 4s, update message so user knows it's a cold start
+  const msgTimer = setTimeout(() => {
+    setLoadingMsg("Server is starting up, this can take ~30s on first load…");
+  }, 4000);
+
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 60000); // 60s timeout
+
+    const res = await fetch("https://startup-xray.onrender.com/analyze-idea", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ idea }),
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeoutId);
+    const data = await res.json();
+    setAnalysis(data);
+  } catch (err) {
+    if (err.name === "AbortError") {
+      setError("Server took too long to respond. Please try clicking 'Analyze Idea' again.");
+    } else {
       setError("Could not reach the server. Please try again.");
-    } finally {
-      setLoading(false);
     }
-  };
+  } finally {
+    clearTimeout(msgTimer);
+    setLoading(false);
+    setLoadingMsg("");
+  }
+};
 
   const handleSubmitAndGoToResults = async () => {
     setLoading(true);
